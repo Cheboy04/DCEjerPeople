@@ -11,19 +11,19 @@ namespace DCEjerPeople
         {
             InitializeComponent();
         }
-        public void OnNewButtonClicked(object sender, EventArgs args)
+        public async void OnNewButtonClicked(object sender, EventArgs args)
         {
             statusMessage.Text = "";
 
-            App.PersonRepo.AddNewPerson(newPerson.Text);
+            await App.PersonRepo.AddNewPerson(newPerson.Text);
             statusMessage.Text = App.PersonRepo.StatusMessage;
         }
 
-        public void OnGetButtonClicked(object sender, EventArgs args)
+        public async void OnGetButtonClicked(object sender, EventArgs args)
         {
             statusMessage.Text = "";
 
-            List<DCPerson> people = App.PersonRepo.GetAllPeople();
+            List<DCPerson> people = await App.PersonRepo.GetAllPeople();
             peopleList.ItemsSource = people;
         }
     }

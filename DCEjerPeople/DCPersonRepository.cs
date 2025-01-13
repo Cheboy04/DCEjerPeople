@@ -11,18 +11,19 @@ namespace DCEjerPeople
     public class DCPersonRepository
     {
         string _dbPath;
-        private SQLiteConnection conn;
+        private SQLiteAsyncConnection conn;
 
         public string StatusMessage { get; set; }
 
 
-        private void Init()
+        private async Task Init()
         {
             if (conn != null)
                 return;
 
-            conn = new SQLiteConnection(_dbPath);
-            conn.CreateTable<DCPerson>();
+            conn = new SQLiteAsyncConnection(_dbPath);
+
+            await conn.CreateTableAsync<DCPerson>();
         }
 
         public DCPersonRepository(string dbPath)
@@ -30,19 +31,19 @@ namespace DCEjerPeople
             _dbPath = dbPath;
         }
 
-        public void AddNewPerson(string name)
+        public async Task AddNewPerson(string name)
         {
             int result = 0;
             try
             {
                 // TODO: Call Init()
-                Init();
+                await Init();
                 // basic validation to ensure a name was entered
                 if (string.IsNullOrEmpty(name))
                     throw new Exception("Valid name required");
 
                 // TODO: Insert the new person into the database
-                result = conn.Insert(new DCPerson { Name = name });
+                result = await conn.InsertAsync(new DCPerson { Name = name });
 
                 StatusMessage = string.Format("{0} record(s) added (Name: {1})", result, name);
             }
@@ -53,13 +54,13 @@ namespace DCEjerPeople
 
         }
 
-        public List<DCPerson> GetAllPeople()
+        public async Task<List<DCPerson>> GetAllPeople()
         {
             // TODO: Init then retrieve a list of Person objects from the database into a list
             try
             {
-                Init();
-                return conn.Table<DCPerson>().ToList();
+                await Init();
+                return await conn.Table<DCPerson>().ToListAsync();
             }
             catch (Exception ex)
             {
